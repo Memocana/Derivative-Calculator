@@ -71,6 +71,8 @@ public class DerivativeCalculator {
             return "sec^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if (str.indexOf("cot(") != -1) //cot
             return "-csc^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if (str.indexOf("e^(") != -1) /* e^x */
+            return str.substring(0,findLast(str,')')+1)+" * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1) //n X ^(n-1)
             return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
         return str;
