@@ -9,7 +9,6 @@ import java.util.Scanner;
  * @author Memo
  */
 public class DerivativeCalculator {
-
     public static void main(String[] args) {
         Scanner console = new Scanner(System.in);
         String str=console.nextLine();
@@ -28,30 +27,22 @@ public class DerivativeCalculator {
         }
         return str.indexOf(end);
     }
-    
     public static String derive(String str){
         System.out.println(str);
         if (str.indexOf("(") == -1) { //anti parantez
-            if (str.indexOf("+") != -1 ){
+            if (str.indexOf("x") == -1)
+                return "0";
+            if (str.indexOf("+") != -1 )
                 if (str.indexOf("-") == -1 || str.indexOf("-") > str.indexOf("+"))
                     return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-            }
-            
-            if (str.indexOf("-") != -1 ){
-                if (str.indexOf("+") == -1 || str.indexOf("-") < str.indexOf("+"))
+            if (str.indexOf("-") != -1 )
                     return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
-            }
-            
-            if (str.indexOf("*") != -1) { //product
+            if (str.indexOf("*") != -1) //product
                 return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
-            } else if (str.indexOf("/") != -1) { //quotient
+            else if (str.indexOf("/") != -1) //quotient
                 return "("+derive(str.substring(0,str.indexOf("/")))+"*"+str.substring(str.indexOf("/")+1) +" - " +str.substring(0,str.indexOf("/")) +"*"+derive(str.substring(str.indexOf("/")+1))+") / (" +str.substring(str.indexOf("/")+1)+")^2" ;
-            } else if (str.indexOf("^") != -1) {
-                if (str.indexOf("^") - str.indexOf("x") == 1) {
-                    //n X ^(n-1)
+            else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1) //n X ^(n-1)
                     return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
-                }
-            }
         }
         return str;
     }
