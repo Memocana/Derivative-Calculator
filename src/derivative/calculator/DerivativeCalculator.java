@@ -43,6 +43,13 @@ public class DerivativeCalculator {
         }
         return str.indexOf(end);
     }
+    public static int findLast(String start, char end) {
+        for (int i = start.length() - 1; i >= 0; i--) {
+            if (start.charAt(i) == end)
+                return i;
+        }
+        return 0;
+    }
     public static String derive(String str){
         System.out.println(str);
         if (str.indexOf("x") == -1)
@@ -56,10 +63,16 @@ public class DerivativeCalculator {
             return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
         else if (str.indexOf("/") != -1) //quotient
             return "("+derive(str.substring(0,str.indexOf("/")))+"*"+str.substring(str.indexOf("/")+1) +" - " +str.substring(0,str.indexOf("/")) +"*"+derive(str.substring(str.indexOf("/")+1))+") / (" +str.substring(str.indexOf("/")+1)+")^2" ;
+        else if (str.indexOf("sin(") != -1) //sin
+            return "cos("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if (str.indexOf("cos(") != -1) //cos
+            return "-sin("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if (str.indexOf("tan(") != -1) //tan
+            return "sec^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if (str.indexOf("cot(") != -1) //cot
+            return "-csc^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1) //n X ^(n-1)
-                    return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
-        else if (str.indexOf("sin(") != -1)
-            return "cos(" ;
+            return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
         return str;
     }
 }
