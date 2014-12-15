@@ -39,7 +39,7 @@ public class DerivativeCalculator {
                         return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
                     else if (str.substring(str.indexOf("*")).indexOf("+") == -1)  {
                         System.out.print("here");
-                        int pos = findSiggn("*",'+',str);
+                        int pos = findSign("*",'+',str);
                         return derive(str.substring(0,pos))+" + "+derive(str.substring(pos+1));
                     
                     } else {
