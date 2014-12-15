@@ -57,22 +57,24 @@ public class DerivativeCalculator {
         if (str.indexOf("+") != -1 )
             if (str.indexOf("-") == -1 || str.indexOf("-") > str.indexOf("+"))
                 return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-        if (str.indexOf("-") != -1 )
+        if (str.indexOf("-") != -1)
             return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
-        if (str.indexOf("*") != -1) //product
+        if (str.indexOf("*") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("*"))) //product
             return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
-        else if (str.indexOf("/") != -1) //quotient
+        else if (str.indexOf("/") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("/"))) //quotient
             return "("+derive(str.substring(0,str.indexOf("/")))+"*"+str.substring(str.indexOf("/")+1) +" - " +str.substring(0,str.indexOf("/")) +"*"+derive(str.substring(str.indexOf("/")+1))+") / (" +str.substring(str.indexOf("/")+1)+")^2" ;
-        else if (str.indexOf("sin(") != -1) //sin
+        else if (str.indexOf("sin(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sin("))) //sin
             return "cos("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
-        else if (str.indexOf("cos(") != -1) //cos
+        else if (str.indexOf("cos(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("cos("))) //cos
             return "-sin("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
-        else if (str.indexOf("tan(") != -1) //tan
+        else if (str.indexOf("tan(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("tan("))) //tan
             return "sec^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
-        else if (str.indexOf("cot(") != -1) //cot
+        else if (str.indexOf("cot(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("cot("))) //cot
             return "-csc^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
-        else if (str.indexOf("e^(") != -1) /* e^x */
+        else if (str.indexOf("e^(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("e^"))) /* e^x */
             return str.substring(0,findLast(str,')')+1)+" * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if(str.indexOf("(") != -1)
+            return derive(str.substring(str.indexOf("(")+1,findLast(str,')')));
         else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1) //n X ^(n-1)
             return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
         return str;
