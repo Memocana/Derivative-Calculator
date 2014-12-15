@@ -26,51 +26,47 @@ public class DerivativeCalculator {
             if (str.charAt(i) == end)
                 return i;
         }
-        return 0;
+        return str.indexOf(end);
     }
     
     public static String derive(String str){
         System.out.println(str);
-        if (str.indexOf("(") == -1) {
-            
-            if (str.indexOf("*") != -1) {
+        if (str.indexOf("(") == -1) { //anti parantez
+            if (str.indexOf("*") != -1) { //multi!
                 if (str.indexOf("+")>-1) { 
-                    if (str.indexOf("*") < str.indexOf("+"))
-                        return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-                    else if (str.substring(str.indexOf("*")).indexOf("+") == -1)  {
-                        System.out.print("here");
-                        int pos = findSign("*",'+',str);
-                        return derive(str.substring(0,pos))+" + "+derive(str.substring(pos+1));
+                    int pos = findSign("*",'+',str);
+                    return derive(str.substring(0,pos))+" + " +derive(str.substring(pos+1));
+
+                } else if (str.indexOf("-")>-1) {
+                    int pos = findSign("*",'-',str);
+                    return derive(str.substring(0,pos))+" - " +derive(str.substring(pos+1));
                     
-                    } else {
-                        int pos = findSign("*",'+',str);
-                        return derive(str.substring(0,pos))+derive(str.substring(pos+1, str.substring(str.indexOf("*")).indexOf("+"))) + " + " +derive(str.substring(str.substring(str.indexOf("*")).indexOf("+")));
-                    }
-                } else if (str.indexOf("-")>-1)
-                    return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1,str.indexOf("-")))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1,str.indexOf("-")))-1))+")" +" - " +derive(str.substring(str.indexOf("-")+1));
-                else    
+                } else { //product rule
                     return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
-                    
+                }
             } else if (str.indexOf("/") != -1) {
-                if (str.indexOf("+")>-1) 
-                    return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1,str.indexOf("+")))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1,str.indexOf("+")))-1))+")" +" + " +derive(str.substring(str.indexOf("+")+1));
-                else if (str.indexOf("-")>-1)
-                    return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1,str.indexOf("-")))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1,str.indexOf("-")))-1))+")" +" - " +derive(str.substring(str.indexOf("-")+1));
-                else    
-                    return "("+(derive(str.substring(0,str.indexOf("/")))+"*"+str.substring(str.indexOf("/")+1) +" + " +str.substring(0,str.indexOf("/")) +"*"+derive(str.substring(str.indexOf("/")+1))) +") / 2("+str.substring(str.indexOf("/")+1)+")";
+                if (str.indexOf("+")>-1) { 
+                    int pos = findSign("*",'+',str);
+                    return derive(str.substring(0,pos))+" + " +derive(str.substring(pos+1));
+
+                } else if (str.indexOf("-")>-1) {
+                    int pos = findSign("*",'-',str);
+                    return derive(str.substring(0,pos))+" - " +derive(str.substring(pos+1));
                     
+                } else { //product rule
+                    return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
+                }
             } else if (str.indexOf("^") != -1) {
                 if (str.indexOf("^") - str.indexOf("x") == 1) {
                     //must add support for constants such as π
                     if (str.indexOf("+")>-1) 
-                        return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1,str.indexOf("+")))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1,str.indexOf("+")))-1))+")" +" + " +derive(str.substring(str.indexOf("+")+1));
+                        return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
                     else if (str.indexOf("-")>-1)
-                        return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1,str.indexOf("-")))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1,str.indexOf("-")))-1))+")" +" - " +derive(str.substring(str.indexOf("-")+1));
-                    else
+                        return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
+                    else //n X ^(n-1)
                         return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
                 }
             }
-            
         }
         return str;
     }
