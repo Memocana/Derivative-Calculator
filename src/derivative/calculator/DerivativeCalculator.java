@@ -46,42 +46,35 @@ public class DerivativeCalculator {
         }
         return str.indexOf(end);
     }
-    public static int findLast(String start, char end) {
-        for (int i = start.length() - 1; i >= 0; i--) {
-            if (start.charAt(i) == end)
-                return i;
-        }
-        return 0;
-    }
     public static String derive(String str){
         System.out.println(str);
         if (str.indexOf("x") == -1)
             return "0";
         if (str.indexOf("+") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("+") || findMatch(str,str.indexOf("(")) < str.indexOf("+"))) )
-            if (str.indexOf("-") == -1 || str.indexOf("-") > str.indexOf("+"))
+            if (str.indexOf("-") <= 0 || str.indexOf("-") > str.indexOf("+"))
                 return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-        if (str.indexOf("-") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("-") || findMatch(str,str.indexOf("(")) < str.indexOf("-"))))
+        if (str.indexOf("-") != -1 && !(str.indexOf("-") == 0) &&(str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("-") || findMatch(str,str.indexOf("(")) < str.indexOf("-"))))
             return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
         if (str.indexOf("*") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("*") || findMatch(str,str.indexOf("(")) < str.indexOf("*")))) //product
             return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
         else if (str.indexOf("/") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("/") || findMatch(str,str.indexOf("(")) < str.indexOf("/")))) //quotient
             return "("+derive(str.substring(0,str.indexOf("/")))+"*"+str.substring(str.indexOf("/")+1) +" - " +str.substring(0,str.indexOf("/")) +"*"+derive(str.substring(str.indexOf("/")+1))+") / (" +str.substring(str.indexOf("/")+1)+")^2" ;
         else if (str.indexOf("sin(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sin("))) //sin
-            return "cos("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+            return "cos("+(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +") * (" +derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
         else if (str.indexOf("cos(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("cos("))) //cos
-            return "-sin("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+            return "-sin("+(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +") * (" +derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
         else if (str.indexOf("tan(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("tan("))) //tan
-            return "sec^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+            return "sec^2("+(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +") * (" +derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
         else if (str.indexOf("cot(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("cot("))) //cot
-            return "-csc^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+            return "-csc^2("+(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +") * (" +derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
         else if (str.indexOf("e^(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("e")))
-            return str.substring(0,findLast(str,')')+1)+" * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
+            return str.substring(0,findMatch(str,str.indexOf("("))+1)+" * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
         else if (str.indexOf("ln(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("ln("))) /* ln x */
-            return "1 / ("+str.substring(str.indexOf("ln(") + 3,findLast(str,')'))+") * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+            return "1 / ("+str.substring(str.indexOf("ln(") + 3,findMatch(str,str.indexOf("(")))+") * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
         else if (str.indexOf("sqrt(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sqrt("))) /* ln x */
-            return "("+str.substring(str.indexOf("(") + 1,findLast(str,')'))+")^(-1/2) * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+            return "("+str.substring(str.indexOf("(") + 1,findMatch(str,str.indexOf("(")))+")^(-1/2) * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +")";
         else if(str.indexOf("(") != -1)
-            return derive(str.substring(str.indexOf("(")+1,findLast(str,')')));
+            return derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))));
         else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1) //n X ^(n-1)
             return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
         return str;
