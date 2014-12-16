@@ -98,8 +98,13 @@ public class DerivativeCalculator {
                 i+=2;
             }
             if (str.charAt(i) == '^' && (str.charAt(i+2) == '1' && str.charAt(i+3) == ')')) {
-
                 i+=4;
+            }
+            if (str.charAt(i) == 'x' && (str.charAt(i+1) == '^' && str.charAt(i+3) == '0')) {
+                if (!((i - 1 < 0 || (i - 1 >= 0 && isNumeric(str.substring(i-1,i)) && str.charAt(i-1) != '1'))))
+                    formatted += "1";
+                i+=5;
+                
             }
             if(i < str.length()) {
                 formatted += str.charAt(i);
