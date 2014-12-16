@@ -57,14 +57,14 @@ public class DerivativeCalculator {
         System.out.println(str);
         if (str.indexOf("x") == -1)
             return "0";
-        if (str.indexOf("+") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("+")))
+        if (str.indexOf("+") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("+") || findMatch(str,str.indexOf("(")) < str.indexOf("+"))) )
             if (str.indexOf("-") == -1 || str.indexOf("-") > str.indexOf("+"))
                 return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-        if (str.indexOf("-") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("-")))
+        if (str.indexOf("-") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("-") || findMatch(str,str.indexOf("(")) < str.indexOf("-"))))
             return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
-        if (str.indexOf("*") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("*"))) //product
+        if (str.indexOf("*") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("*") || findMatch(str,str.indexOf("(")) < str.indexOf("*")))) //product
             return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
-        else if (str.indexOf("/") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("/"))) //quotient
+        else if (str.indexOf("/") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("/") || findMatch(str,str.indexOf("(")) < str.indexOf("/")))) //quotient
             return "("+derive(str.substring(0,str.indexOf("/")))+"*"+str.substring(str.indexOf("/")+1) +" - " +str.substring(0,str.indexOf("/")) +"*"+derive(str.substring(str.indexOf("/")+1))+") / (" +str.substring(str.indexOf("/")+1)+")^2" ;
         else if (str.indexOf("sin(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sin("))) //sin
             return "cos("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
@@ -74,8 +74,8 @@ public class DerivativeCalculator {
             return "sec^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if (str.indexOf("cot(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("cot("))) //cot
             return "-csc^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
-        else if (str.indexOf("e^(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("e"))) /* e^x */
-            return str.substring(0,findLast(str,')')+1)+" * ("+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')))+")";
+        else if (str.indexOf("e^(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("e")))
+            return str.substring(0,findLast(str,')')+1)+" * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
         else if (str.indexOf("ln(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("ln("))) /* ln x */
             return "1 / ("+str.substring(str.indexOf("ln(") + 3,findLast(str,')'))+") * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if (str.indexOf("sqrt(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sqrt("))) /* ln x */
@@ -94,13 +94,13 @@ public class DerivativeCalculator {
                     i++;
                 }
             }
-            if (str.charAt(i) == '^' && (str.charAt(i+1) == '1' && !isNumeric(str.substring(i+2,i+3)))) {
+            if (str.charAt(i) == '^' && (i+2 < str.length() && str.charAt(i+1) == '1' && !isNumeric(str.substring(i+2,i+3)))) {
                 i+=2;
             }
-            if (str.charAt(i) == '^' && (str.charAt(i+2) == '1' && str.charAt(i+3) == ')')) {
+            if (str.charAt(i) == '^' && (i+2 < str.length() && str.charAt(i+2) == '1' && str.charAt(i+3) == ')')) {
                 i+=4;
             }
-            if (str.charAt(i) == 'x' && (str.charAt(i+1) == '^' && str.charAt(i+3) == '0')) {
+            if (str.charAt(i) == 'x' && (i+3 < str.length() && str.charAt(i+1) == '^' && str.charAt(i+3) == '0')) {
                 if (!((i - 1 < 0 || (i - 1 >= 0 && isNumeric(str.substring(i-1,i)) && str.charAt(i-1) != '1'))))
                     formatted += "1";
                 i+=5;
@@ -111,5 +111,17 @@ public class DerivativeCalculator {
             }
         }
         return formatted;
+    }
+    public static int findMatch(String str, int pos) {
+        int open = 1;
+        for (int i = pos + 1; i < str.length(); i++) {
+            if (str.charAt(i) == '(')
+                open++;
+            if (str.charAt(i) == ')')
+                open--;
+            if (open == 0)
+                return i;
+        }
+        return pos + 2;
     }
 }
