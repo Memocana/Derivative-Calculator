@@ -25,7 +25,10 @@ public class DerivativeCalculator {
                 if (i == str.length() - 1 || str.charAt(i+1) != '^')
                     spaceless += "^1";
         }
-        System.out.println(derive(spaceless));
+        String unFormatted = derive(spaceless);
+        System.out.println(unFormatted);
+        unFormatted = format(unFormatted);
+        System.out.println(unFormatted);
     }  
     public static boolean isNumeric(String str)  {  
         try  {  
@@ -54,10 +57,10 @@ public class DerivativeCalculator {
         System.out.println(str);
         if (str.indexOf("x") == -1)
             return "0";
-        if (str.indexOf("+") != -1 )
+        if (str.indexOf("+") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("+")))
             if (str.indexOf("-") == -1 || str.indexOf("-") > str.indexOf("+"))
                 return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-        if (str.indexOf("-") != -1)
+        if (str.indexOf("-") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("-")))
             return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
         if (str.indexOf("*") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("*"))) //product
             return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
@@ -71,12 +74,37 @@ public class DerivativeCalculator {
             return "sec^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if (str.indexOf("cot(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("cot("))) //cot
             return "-csc^2("+(str.substring(str.indexOf("(")+1,findLast(str, ')'))) +") * " +derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
-        else if (str.indexOf("e^(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("e^"))) /* e^x */
-            return str.substring(0,findLast(str,')')+1)+" * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if (str.indexOf("e^(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("e"))) /* e^x */
+            return str.substring(0,findLast(str,')')+1)+" * ("+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')))+")";
+        else if (str.indexOf("ln(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("ln("))) /* ln x */
+            return "1 / ("+str.substring(str.indexOf("ln(") + 3,findLast(str,')'))+") * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
+        else if (str.indexOf("sqrt(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sqrt("))) /* ln x */
+            return "("+str.substring(str.indexOf("(") + 1,findLast(str,')'))+")^(-1/2) * "+derive(str.substring(str.indexOf("(")+1,findLast(str, ')')));
         else if(str.indexOf("(") != -1)
             return derive(str.substring(str.indexOf("(")+1,findLast(str,')')));
         else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1) //n X ^(n-1)
             return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
         return str;
+    }
+    public static String format(String str) {
+        String formatted = "";
+        for (int i = 0; i < str.length(); i++) {
+            if(str.charAt(i) == '1') {
+                if (str.charAt(i+1) == 'x' && (i - 1 < 0 || (i - 1 >= 0 && !isNumeric(str.substring(i-1,i))))) {
+                    i++;
+                }
+            }
+            if (str.charAt(i) == '^' && (str.charAt(i+1) == '1' && !isNumeric(str.substring(i+2,i+3)))) {
+                i+=2;
+            }
+            if (str.charAt(i) == '^' && (str.charAt(i+2) == '1' && str.charAt(i+3) == ')')) {
+
+                i+=4;
+            }
+            if(i < str.length()) {
+                formatted += str.charAt(i);
+            }
+        }
+        return formatted;
     }
 }
