@@ -39,13 +39,6 @@ public class DerivativeCalculator {
         }  
         return true;  
     }
-    public static int findSign(String start, char end, String str) {
-        for (int i = str.indexOf(start); i >= str.indexOf(end); i--) {
-            if (str.charAt(i) == end)
-                return i;
-        }
-        return str.indexOf(end);
-    }
     public static String derive(String str){
         System.out.println(str);
         if (str.indexOf("x") == -1)
@@ -82,18 +75,17 @@ public class DerivativeCalculator {
     public static String format(String str) {
         String formatted = "";
         for (int i = 0; i < str.length(); i++) {
-            if(str.charAt(i) == '1') {
-                if (str.charAt(i+1) == 'x' && (i - 1 < 0 || (i - 1 >= 0 && !isNumeric(str.substring(i-1,i))))) {
-                    i++;
-                }
+            
+            if(i+1 < str.length() && str.charAt(i) == '1' && (str.charAt(i+1) == 'x' && (i - 1 < 0 || (i - 1 >= 0 && !isNumeric(str.substring(i-1,i))))) ) {
+                i++;
             }
-            if (str.charAt(i) == '^' && (i+2 < str.length() && str.charAt(i+1) == '1' && !isNumeric(str.substring(i+2,i+3)))) {
+            if (i+2 < str.length() && str.charAt(i) == '^' && (str.charAt(i+1) == '1' && !isNumeric(str.substring(i+2,i+3)))) {
                 i+=2;
             }
-            if (str.charAt(i) == '^' && (i+2 < str.length() && str.charAt(i+2) == '1' && str.charAt(i+3) == ')')) {
+            if (i+2 < str.length() && str.charAt(i) == '^' && ( str.charAt(i+2) == '1' && str.charAt(i+3) == ')')) {
                 i+=4;
             }
-            if (str.charAt(i) == 'x' && (i+3 < str.length() && str.charAt(i+1) == '^' && str.charAt(i+3) == '0')) {
+            if (i+3 < str.length() && str.charAt(i) == 'x' && (str.charAt(i+1) == '^' && str.charAt(i+3) == '0')) {
                 if (!((i - 1 < 0 || (i - 1 >= 0 && isNumeric(str.substring(i-1,i)) && str.charAt(i-1) != '1'))))
                     formatted += "1";
                 i+=5;
