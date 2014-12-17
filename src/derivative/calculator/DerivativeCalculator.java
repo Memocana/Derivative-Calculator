@@ -25,8 +25,6 @@ public class DerivativeCalculator {
                 if (i == str.length() - 1 || str.charAt(i+1) != '^')
                     spaceless += "^1";
         }
-                System.out.println("here");
-
         String unFormatted = derive(spaceless);
         System.out.println(unFormatted);
         unFormatted = format(unFormatted);
@@ -42,7 +40,7 @@ public class DerivativeCalculator {
         return true;  
     }
     public static String derive(String str){
-        System.out.println(str+"!!!!!!!!!!");
+        System.out.println(str);
         if (str.isEmpty())
             return "";
         if (str.indexOf("x") == -1)
@@ -72,22 +70,16 @@ public class DerivativeCalculator {
             return "1 / ("+str.substring(str.indexOf("(") + 1,findMatch(str,str.indexOf("(")))+"*ln(10)) * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
         else if (str.indexOf("sqrt(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sqrt("))) /* sqrt x */
             return "("+str.substring(str.indexOf("(") + 1,findMatch(str,str.indexOf("(")))+")^(-1/2) * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +")";
-        else if(str.indexOf("^(") != -1 && str.indexOf("(") > str.indexOf("^(") ) {
-                        System.out.print("2");
+        else if(str.indexOf("^(") != -1 && str.indexOf("(") > str.indexOf("^(") )
             return str.substring(0,findMatch(str,str.indexOf("("))+1)+" * ln("+str.substring(0, str.indexOf("^")) +") * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
-        }
-        else if(str.indexOf("(") == 0) {
+        else if(str.indexOf("(") == 0)
             return derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))));
-        }
-        else if(str.indexOf("^") != -1 && str.indexOf("^") + 2 < str.length() && str.charAt(str.indexOf("^") - 1) == 'x' && str.charAt(str.indexOf("^") + 2) == 'x') {
+        else if(str.indexOf("^") != -1 && str.indexOf("^") + 2 < str.length() && str.charAt(str.indexOf("^") - 1) == 'x' && str.charAt(str.indexOf("^") + 2) == 'x')
             return "(ln(x) + 1)x^(x)" +derive(str.substring(str.indexOf("x")+6));
-        }
-        else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1 && (str.indexOf("(") == -1 || str.indexOf("(") > str.indexOf("^"))) {
+        else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1 && (str.indexOf("(") == -1 || str.indexOf("(") > str.indexOf("^")))
             return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
-        }
-        else if (str.indexOf("^") != -1) {
+        else if (str.indexOf("^") != -1)
             return str.substring(str.indexOf("^")+1,str.indexOf("("))+" * "+(str.substring(0,str.indexOf("^")) +str.substring(str.indexOf("("),findMatch(str,str.indexOf("("))+1)) +"^(" +(Integer.parseInt(str.substring(str.indexOf("^")+1,str.indexOf("("))) - 1) +") * ("+derive(str.substring(0,str.indexOf("^")) +str.substring(str.indexOf("("),findMatch(str,str.indexOf("("))+1)) +")";
-        }
         return str;
     }
     public static String format(String str) {
