@@ -25,6 +25,8 @@ public class DerivativeCalculator {
                 if (i == str.length() - 1 || str.charAt(i+1) != '^')
                     spaceless += "^1";
         }
+                System.out.println("here");
+
         String unFormatted = derive(spaceless);
         System.out.println(unFormatted);
         unFormatted = format(unFormatted);
@@ -40,7 +42,7 @@ public class DerivativeCalculator {
         return true;  
     }
     public static String derive(String str){
-        System.out.println(str);
+        System.out.println(str+"!!!!!!!!!!");
         if (str.isEmpty())
             return "";
         if (str.indexOf("x") == -1)
@@ -66,7 +68,9 @@ public class DerivativeCalculator {
             return str.substring(0,findMatch(str,str.indexOf("("))+1)+" * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
         else if (str.indexOf("ln(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("ln("))) /* ln x */
             return "1 / ("+str.substring(str.indexOf("ln(") + 3,findMatch(str,str.indexOf("(")))+") * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
-        else if (str.indexOf("sqrt(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sqrt("))) /* ln x */
+        else if (str.indexOf("log(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("log("))) /* log x */
+            return "1 / ("+str.substring(str.indexOf("(") + 1,findMatch(str,str.indexOf("(")))+"*ln(10)) * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))))+")";
+        else if (str.indexOf("sqrt(") != -1 && (str.indexOf("(")== -1 || str.indexOf("(") > str.indexOf("sqrt("))) /* sqrt x */
             return "("+str.substring(str.indexOf("(") + 1,findMatch(str,str.indexOf("(")))+")^(-1/2) * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("(")))) +")";
         else if(str.indexOf("^(") != -1 && str.indexOf("(") > str.indexOf("^(") )
             return str.substring(0,findMatch(str,str.indexOf("("))+1)+" * ln("+str.substring(0, str.indexOf("^")) +") * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
