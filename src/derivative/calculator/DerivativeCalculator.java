@@ -11,21 +11,25 @@ import java.util.Scanner;
 public class DerivativeCalculator {
     public static void main(String[] args) {
         Scanner console = new Scanner(System.in);
-        String str=console.nextLine();
+        String str=console.nextLine().toLowerCase();
         String spaceless = "";
         for (int i = 0; i < str.length(); i++) {
-            if(str.charAt(i) == 'x') {
-                if (i == 0 || !isNumeric(str.charAt(i-1)+"")){
-                    spaceless += "1";
-                }
-            }
             if(str.charAt(i) != ' ')
                 spaceless += str.charAt(i);
-            if(str.charAt(i) == 'x')
-                if (i == str.length() - 1 || str.charAt(i+1) != '^')
+        }
+        System.out.println(spaceless);
+        String corrections = "";
+        for (int i = 0; i < spaceless.length(); i++) {
+            if(spaceless.charAt(i) == 'x')
+                if (i == 0 || !isNumeric(spaceless.charAt(i-1)+""))
+                    corrections += "1";
+            corrections += spaceless.charAt(i);
+            if(spaceless.charAt(i) == 'x')
+                if (i == spaceless.length() - 1 || spaceless.charAt(i+1) != '^')
                     spaceless += "^1";
         }
-        String unFormatted = derive(spaceless);
+        
+        String unFormatted = derive(corrections);
         System.out.println(unFormatted);
         unFormatted = format(unFormatted);
         System.out.println(unFormatted);
@@ -45,11 +49,10 @@ public class DerivativeCalculator {
             return "";
         if (str.indexOf("x") == -1)
             return "0";
-        if (str.indexOf("+") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("+") || findMatch(str,str.indexOf("(")) < str.indexOf("+"))) )
-            if (str.indexOf("-") <= 0 || str.indexOf("-") > str.indexOf("+"))
-                return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
-        if (str.indexOf("-") != -1 && !(str.indexOf("-") == 0) &&(str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("-") || findMatch(str,str.indexOf("(")) < str.indexOf("-"))))
-            return derive(str.substring(0,str.indexOf("-")))+" - " +derive(str.substring(str.indexOf("-")+1));
+        if (str.indexOf("+") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("+") || findMatch(str,str.indexOf("(")) < str.indexOf("+"))) && (str.indexOf("-") <= 0 || str.indexOf("-") > str.indexOf("+")))
+            return derive(str.substring(0,str.indexOf("+")))+" + " +derive(str.substring(str.indexOf("+")+1));
+        if (str.substring(str.indexOf("^")+2).indexOf("-") == 0|| str.substring(str.indexOf("^")+2).indexOf("-") > 0 && (isNumeric(str.substring(str.indexOf("^")+2).charAt(str.substring(str.indexOf("^")+2).indexOf("-")-1)+"") || str.substring(str.indexOf("^")+2).charAt(str.substring(str.indexOf("^")+2).indexOf("-")-1) == ')') && (str.substring(str.indexOf("^")+2).indexOf("(")== -1 || (str.substring(str.indexOf("^")+2).indexOf("(") > str.substring(str.indexOf("^")+2).indexOf("-") || findMatch(str,str.substring(str.indexOf("^")+2).indexOf("(")) < str.substring(str.indexOf("^")+2).indexOf("-"))))
+            return derive(str.substring(0,str.substring(str.indexOf("^")+2).indexOf("-")+str.substring(0,str.indexOf("^")+2).length()))+" - " +derive(str.substring(str.substring(str.indexOf("^")+2).indexOf("-")+str.substring(0,str.indexOf("^")+2).length()+1) );
         if (str.indexOf("*") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("*") || findMatch(str,str.indexOf("(")) < str.indexOf("*")))) //product
             return derive(str.substring(0,str.indexOf("*")))+"*"+str.substring(str.indexOf("*")+1) +" + " +str.substring(0,str.indexOf("*")) +"*"+derive(str.substring(str.indexOf("*")+1));
         else if (str.indexOf("/") != -1 && (str.indexOf("(")== -1 || (str.indexOf("(") > str.indexOf("/") || findMatch(str,str.indexOf("(")) < str.indexOf("/")))) //quotient
@@ -74,7 +77,7 @@ public class DerivativeCalculator {
             return str.substring(0,findMatch(str,str.indexOf("("))+1)+" * ln("+str.substring(0, str.indexOf("^")) +") * ("+derive(str.substring(str.indexOf("(")+1,findMatch(str, str.indexOf("("))))+")";
         else if(str.indexOf("(") == 0)
             return derive(str.substring(str.indexOf("(")+1,findMatch(str,str.indexOf("("))));
-        else if(str.indexOf("^") != -1 && str.indexOf("^") + 2 < str.length() && str.charAt(str.indexOf("^") - 1) == 'x' && str.charAt(str.indexOf("^") + 2) == 'x') 
+        else if(str.indexOf("^") != -1 && str.indexOf("^") + 2 < str.length() && str.charAt(str.indexOf("^") - 1) == 'x' && str.charAt(str.indexOf("^") + 2) == 'x') //x^x
             return "(ln(x) + 1)x^(x)" +derive(str.substring(str.indexOf("x")+6));
         else if (str.indexOf("^") != -1 && str.indexOf("^") - str.indexOf("x") == 1 && (str.indexOf("(") == -1 || str.indexOf("(") > str.indexOf("^"))) 
             return (Integer.parseInt(str.substring(0,str.indexOf("x")))*Integer.parseInt((str.substring(str.indexOf("^")+1))) + "x^(" + (Integer.parseInt(str.substring(str.indexOf("^")+1))-1))+")";
@@ -85,7 +88,6 @@ public class DerivativeCalculator {
     public static String format(String str) {
         String formatted = "";
         for (int i = 0; i < str.length(); i++) {
-            
             if(i+1 < str.length() && str.charAt(i) == '1' && (str.charAt(i+1) == 'x' && (i - 1 < 0 || (i - 1 >= 0 && !isNumeric(str.substring(i-1,i))))) ) {
                 i++;
             }
